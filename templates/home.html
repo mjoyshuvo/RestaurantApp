@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col-md-12 mt-5">
+        <div class="row mb-2">
+            <a href="/admin">Admin Url</a>
+        </div>
+    </div>
+{#    <div class="col-md-12">#}
+{#        <div class="row pl-0">#}
+{#            <div class="col-md-4">#}
+{#                <label for="category">Choose a Category:</label>#}
+{#                <select name="category" id="category">#}
+{#                    <option value="">------</option>#}
+{#                    {% for category in categories %}#}
+{#                        <option value={{ category.id }}>{{ category.name }}</option>#}
+{#                    {% endfor %}#}
+{#                </select>#}
+{#            </div>#}
+{#            <div class="col-md-4">#}
+{#                <input type="file" id="file" name="file">#}
+{#            </div>#}
+{#            <div class="col-md-4">#}
+{#                <button type="button" class="generate_menu">Generate</button>#}
+{#            </div>#}
+{##}
+{#        </div>#}
+{#    </div>#}
+{% endblock %}
+{% block js %}
+{#    <script>#}
+{#        var is_superuser = "{{ is_superuser }}"#}
+{#        $(document).on('click', '.generate_menu', function (e) {#}
+{#            e.preventDefault();#}
+{#            if (is_superuser === "False") {#}
+{#                alert('Permission Denied.')#}
+{#            } else {#}
+{#                console.log($('#category').val());#}
+{#            }#}
+{#        })#}
+{#    </script>#}
+{% endblock %}
