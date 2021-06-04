@@ -10,7 +10,8 @@ urlpatterns = [
     path('', home, name='home'),
     path('admin/', admin.site.urls),
     path('', include('django.contrib.auth.urls')),
-    url(r'^api/v1/', include(api_urls, 'api_v1'))
+    # url(r'^api/v1/', include(api_urls, 'api_v1'))
+    url(r'^api/', include(api_urls, 'api'))
 ]
 
 urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)
