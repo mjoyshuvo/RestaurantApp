@@ -1,5 +1,6 @@
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
 from django.db import models
+from apps.restaurant.models import Restaurant
 
 
 class Permission(models.Model):
@@ -59,6 +60,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    employee_type = models.CharField(choices=(('Employee', 'Employee'), ('Restaurant', 'Restaurant')),
+                                     default='Employee', null=False, blank=False, max_length=10)
+    restaurant = models.OneToOneField(Restaurant, null=True, blank=True, on_delete=models.PROTECT)
     role = models.ForeignKey(
         Role, on_delete=models.PROTECT, null=False, blank=False, related_name='user', default=1)
     objects = UserProfileManager()
@@ -67,9 +71,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email']
 
     def get_username(self):
-
         return self.username
 
     def __str__(self):
-
         return self.email

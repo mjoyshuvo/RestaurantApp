@@ -8,6 +8,12 @@ from conf.pagination import LargeResultsSetPagination
 from conf.viewset import CustomViewSetForQuerySet
 
 
+def validate_restaurant(restaurant):
+    if not restaurant:
+        raise serializers.ValidationError(
+            {"status": 400, "message": "Employee type Restaurant must select a Restaurant"})
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -16,6 +22,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.get('password')
+        employee_type = validated_data.get('employee_type')
+        restaurant = validated_data.get('restaurant')
+        if employee_type == 'Restaurant':
+            validate_restaurant(restaurant)
         validated_data.update({'password': make_password(password)})
         user = UserProfile.objects.create(**validated_data)
         user.set_password(password)
@@ -23,6 +33,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        employee_type = validated_data.get('employee_type')
+        restaurant = validated_data.get('restaurant')
+        if employee_type == 'Restaurant':
+            validate_restaurant(restaurant)
         for attr, value in validated_data.items():
             if attr == 'password':
                 instance.set_password(value)

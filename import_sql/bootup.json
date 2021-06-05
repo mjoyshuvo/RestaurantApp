@@ -3,7 +3,25 @@
     "model": "user.permission",
     "pk": 1,
     "fields": {
-      "name": "menu",
+      "name": "User Management",
+      "code": "user_management",
+      "active": true
+    }
+  },
+  {
+    "model": "user.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Restaurant",
+      "code": "restaurant",
+      "active": true
+    }
+  },
+  {
+    "model": "user.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Menu",
       "code": "menu",
       "active": true
     }
@@ -17,7 +35,7 @@
       "active": true,
       "created_date": "2021-06-04 00:00:00.000000",
       "modified_date": "2021-06-04 00:00:00.000000",
-      "permission": [1]
+      "permission": [1,2,3]
     }
   },
   {
@@ -29,7 +47,7 @@
       "active": true,
       "created_date": "2021-06-04 00:00:00.000000",
       "modified_date": "2021-06-04 00:00:00.000000",
-      "permission": [1]
+      "permission": [3]
     }
   },
   {
@@ -44,6 +62,7 @@
       "username": "admin",
       "first_name": "Administrator",
       "last_name": "Administrator",
+      "employee_type": "Employee",
       "is_active": true,
       "role": 1
     }

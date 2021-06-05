@@ -1,8 +1,13 @@
+from django.db import IntegrityError
 from rest_framework import serializers
-from apps.restaurant.models import Restaurant, Menu
+from apps.restaurant.models import Restaurant, Menu, Vote
 from conf.permissions import ApiBasePermission
 from conf.pagination import LargeResultsSetPagination
 from conf.viewset import CustomViewSetForQuerySet
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import JSONRenderer
+from datetime import datetime
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -31,5 +36,56 @@ class MenuViewSet(CustomViewSetForQuerySet):
     pagination_class = LargeResultsSetPagination
     model = Menu
     permission_classes = [ApiBasePermission]
-    permission_id = [1, ]
+    permission_id = [3, ]
     queryset = Menu.objects.all()
+
+    def get_queryset(self):
+        current_day = self.request.query_params.get('current_day')
+        if current_day:
+            queryset = Menu.objects.filter(created_at=datetime.now().date())
+            return queryset
+        queryset = Menu.objects.all()
+        return queryset
+
+
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = "__all__"
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=('menu', 'created_at', 'employee'),
+                message="One user can vote for a single menu in a day."
+            )
+        ]
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def make_vote(request):
+    if request.user.employee_type == 'Employee':
+        menu_id = request.GET['menu_id'] if 'menu_id' in request.GET else None
+        if not menu_id:
+            raise serializers.ValidationError({"status": 400, "message": "User must provide a menu id"})
+        try:
+            menu = Menu.objects.get(id=menu_id, created_at=datetime.now().date())
+            try:
+                vote = Vote.objects.filter(employee=request.user, created_at=datetime.now().date())
+                if vote.exists():
+                    return Response({"status": 400, "message": "Sorry you've voted today already"})
+                Vote.objects.create(menu=menu, employee=request.user)
+            except IntegrityError as e:
+                return Response({"status": 400, "message": "User can vote a menu in a day"})
+            return Response({"status": 200, "message": "You've voted successfully"})
+        except Menu.DoesNotExist:
+            raise serializers.ValidationError({"status": 400, "message": "Not a valid menu"})
+
+
+class VoteViewSet(CustomViewSetForQuerySet):
+    serializer_class = VoteSerializer
+    pagination_class = LargeResultsSetPagination
+    model = Vote
+    permission_classes = [ApiBasePermission]
+    permission_id = [3, ]
+    queryset = Vote.objects.all()
