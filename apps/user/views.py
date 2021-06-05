@@ -1,4 +1,3 @@
-from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
@@ -9,14 +8,6 @@ from conf.pagination import LargeResultsSetPagination
 from conf.viewset import CustomViewSetForQuerySet
 
 
-class BaseViewSet(viewsets.ModelViewSet):
-    filter_backends = (SearchFilter, OrderingFilter)
-    permission_classes = [DjangoModelPermissions]
-
-
-# Create your views here.
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -24,8 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        # user = UserProfile.objects.create_user(**validated_data)
-        # user.set_password()
         password = validated_data.get('password')
         validated_data.update({'password': make_password(password)})
         user = UserProfile.objects.create(**validated_data)

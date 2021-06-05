@@ -1,13 +1,17 @@
-from django.conf.urls import include
 from django.urls import path
-from django.conf.urls import url, include
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
+from django.conf.urls import include
+from apps.api.views import LogoutAPIView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 app_name = 'Api'
 
 urlpatterns = [
-    url(r'^api-token-auth/', obtain_jwt_token, name='api_token'),
-    url(r'^api-token-refresh/', refresh_jwt_token),
-    url(r'^api-token-verify/', verify_jwt_token),
-    path('', include('apps.user.urls', namespace='users_api'))
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutAPIView.as_view(), name="logout"),
+    path('', include('apps.user.urls', namespace='users_api')),
+    path('', include('apps.restaurant.urls', namespace='restaurant_api'))
 ]
