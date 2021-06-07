@@ -1,5 +1,6 @@
 from django.db import models
 from conf.validators import validate_file_extension_menu
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class BaseModel(models.Model):
@@ -18,15 +19,16 @@ class Menu(BaseModel):
     restaurant = models.ForeignKey(Restaurant, null=False, blank=False, on_delete=models.CASCADE,
                                    related_name='restaurant')
     menu = models.FileField(upload_to='menus', null=False, blank=False, validators=[validate_file_extension_menu])
+    vote_count = models.IntegerField(null=False, blank=False, default=0)
 
     class Meta:
         unique_together = ('restaurant', 'created_at')
 
 
-class Vote(BaseModel):
-    menu = models.ForeignKey(Menu, null=False, blank=False, on_delete=models.CASCADE, related_name='vote_menu')
-    employee = models.ForeignKey('user.UserProfile', null=False, blank=False, on_delete=models.CASCADE,
-                                 related_name='user')
+class Result(BaseModel):
+    restaurant = models.ForeignKey(Restaurant, null=False, blank=False, on_delete=models.CASCADE,
+                                   related_name='result_restaurant')
+    menu = models.ForeignKey(Menu, null=False, blank=False, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('menu', 'created_at', 'employee')
+        unique_together = ('restaurant', 'created_at')

@@ -65,6 +65,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     restaurant = models.OneToOneField(Restaurant, null=True, blank=True, on_delete=models.PROTECT)
     role = models.ForeignKey(
         Role, on_delete=models.PROTECT, null=False, blank=False, related_name='user', default=1)
+    last_vote_date = models.DateField(null=True, blank=True)
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'username'
