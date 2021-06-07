@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
-from apps.restaurant.models import Restaurant, Menu
+from apps.restaurant.models import Restaurant, Menu, Result
 from conf.permissions import ApiBasePermission
 from conf.pagination import LargeResultsSetPagination
 from conf.viewset import CustomViewSetForQuerySet
@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from datetime import datetime
-from django.db.models import Sum
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -72,3 +71,15 @@ def make_vote(request):
         except Menu.DoesNotExist:
             raise serializers.ValidationError({"status": 400, "message": "Not a valid menu"})
     return Response({"status": 200, "message": "You have to be an employee to vote."})
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def generate_result(request):
+    top_menus = Menu.objects.filter(created_at=datetime.now().date()).order_by('-vote_count')[:4]
+    previous_results = Result.objects.values_list('restaurant_id', flat=True)[:3]
+    for menu in top_menus:
+        if menu.restaurant_id not in previous_results:
+            Result.objects.create(menu=menu, restaurant=menu.restaurant)
+            return Response({"status": 200, "message": "The winner restaurant is {}".format(menu.restaurant.name)})
+    return Response({"status": 200, "message": "No result found"})
