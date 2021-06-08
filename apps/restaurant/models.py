@@ -28,7 +28,6 @@ class Menu(BaseModel):
 class Result(BaseModel):
     restaurant = models.ForeignKey(Restaurant, null=False, blank=False, on_delete=models.CASCADE,
                                    related_name='result_restaurant')
-    menu = models.ForeignKey(Menu, null=False, blank=False, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('restaurant', 'created_at')

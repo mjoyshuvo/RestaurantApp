@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from rest_framework import serializers
 from apps.restaurant.models import Restaurant, Menu, Result
 from conf.permissions import ApiBasePermission
@@ -73,6 +73,21 @@ def make_vote(request):
     return Response({"status": 200, "message": "You have to be an employee to vote."})
 
 
+class ResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = "__all__"
+
+
+class ResultViewSet(CustomViewSetForQuerySet):
+    serializer_class = ResultSerializer
+    pagination_class = LargeResultsSetPagination
+    model = Result
+    permission_classes = [ApiBasePermission]
+    permission_id = [3, ]
+    queryset = Result.objects.all()
+
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def generate_result(request):
@@ -80,6 +95,11 @@ def generate_result(request):
     previous_results = Result.objects.values_list('restaurant_id', flat=True)[:3]
     for menu in top_menus:
         if menu.restaurant_id not in previous_results:
-            Result.objects.create(menu=menu, restaurant=menu.restaurant)
+            try:
+                result = Result.objects.get(created_at=datetime.now().date())
+                result.restaurant = menu.restaurant
+                menu.save()
+            except Result.DoesNotExist:
+                Result.objects.create(restaurant=menu.restaurant)
             return Response({"status": 200, "message": "The winner restaurant is {}".format(menu.restaurant.name)})
     return Response({"status": 200, "message": "No result found"})
