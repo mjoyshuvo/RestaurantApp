@@ -1,1 +1,1 @@
-log file to log voting under the log folder
+log file to log voting under the log folder.
