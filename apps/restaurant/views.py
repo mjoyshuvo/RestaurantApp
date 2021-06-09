@@ -8,6 +8,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from datetime import datetime
+from django.db.models import Q
+import logging
+
+success_logger = logging.getLogger('success_logger')
+warning_logger = logging.getLogger('warning_logger')
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -67,6 +72,7 @@ def make_vote(request):
                 menu.save()
                 user.last_vote_date = current_date
                 user.save()
+                success_logger.info("User:{} Voted for Restaurant:{}".format(user.id, menu.restaurant_id))
                 return Response({"status": 200, "message": "You've voted successfully"})
         except Menu.DoesNotExist:
             raise serializers.ValidationError({"status": 400, "message": "Not a valid menu"})
@@ -92,13 +98,14 @@ class ResultViewSet(CustomViewSetForQuerySet):
 @renderer_classes((JSONRenderer,))
 def generate_result(request):
     top_menus = Menu.objects.filter(created_at=datetime.now().date()).order_by('-vote_count')[:4]
-    previous_results = Result.objects.values_list('restaurant_id', flat=True)[:3]
+    previous_results = Result.objects.filter(~Q(created_at=datetime.now().date())).values_list('restaurant_id',
+                                                                                               flat=True)[:3]
     for menu in top_menus:
         if menu.restaurant_id not in previous_results:
             try:
                 result = Result.objects.get(created_at=datetime.now().date())
-                result.restaurant = menu.restaurant
-                menu.save()
+                # result.restaurant = menu.restaurant
+                # menu.save()
             except Result.DoesNotExist:
                 Result.objects.create(restaurant=menu.restaurant)
             return Response({"status": 200, "message": "The winner restaurant is {}".format(menu.restaurant.name)})

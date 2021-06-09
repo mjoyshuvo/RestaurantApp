@@ -182,3 +182,55 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+# Log config
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '[%(asctime)s] %(levelname)s::(%(process)d %(thread)d)::%(module)s - %(message)s'
+        },
+    },
+    'handlers': {
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'log/critical_error-{}.log'.format(datetime.datetime.now().date()),
+            'formatter': 'default'
+        },
+        'warning': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': 'log/error-{}.log'.format(datetime.datetime.now().date()),
+            'formatter': 'default'
+        },
+        'success': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'log/success-{}.log'.format(datetime.datetime.now().date()),
+            'formatter': 'default'
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['error'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'warning_logger': {
+            'handlers': ['warning'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'success_logger': {
+            'handlers': ['success'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+
+}
