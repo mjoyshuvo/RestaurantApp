@@ -5,8 +5,8 @@ from rest_framework.test import APITestCase
 class TestSetup(APITestCase):
 
     def setUp(self):
-        self.user_url = reverse('api_v1:users_api:users-list')
-        self.auth_url = reverse('api_v1:api_token')
+        self.user_url = reverse('api:users_api:users-list')
+        self.auth_url = reverse('api:token_obtain_pair')
 
         self.user_data = {
             "first_name": "unit",

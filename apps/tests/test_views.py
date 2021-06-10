@@ -11,13 +11,16 @@ class TestUserAPI(TestSetup):
     def get_token(self):
         # Create a user is a workaround in order to authentication works
         password = 'strong_password'
-        data_list = [{"pk": 1, "name": "User Management", "code": "user_management", "active": True}]
+        data_list = [{"pk": 1, "name": "User Management", "code": "user_management", "active": True},
+                     {"pk": 2, "name": "Restaurant", "code": "restaurant", "active": True},
+                     {"pk": 3, "name": "Menu", "code": "menu", "active": True}]
+
         obj_list = [Permission(**data_dict) for data_dict in data_list]
-        permissions = Permission.objects.bulk_create(obj_list)
-        role = Role.objects.create(pk=1, name="General User", code="general_user", active=True)
-        role.permission.set([1])
+        Permission.objects.bulk_create(obj_list)
+        role = Role.objects.create(pk=1, name="Admin", code="admin", active=True)
+        role.permission.set([1, 2, 3])
         user = UserProfile.objects.create(first_name="abcd", last_name="abcd", username='abcd',
-                                          email='abcd@mail.com', password=password, role_id=1)
+                                          email='abcd@mail.com', password=password, role_id=1, employee_type='Employee')
         user.set_password(user.password)
         user.save()
         self.assertEqual(user.is_active, 1, 'Active User')
@@ -29,7 +32,7 @@ class TestUserAPI(TestSetup):
         response = self.client.post(self.auth_url, credential, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
-        token = response.data['token']
+        token = response.data['access']
         return token
 
     def test_user_cannot_register_with_no_data(self):

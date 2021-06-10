@@ -97,9 +97,10 @@ class ResultViewSet(CustomViewSetForQuerySet):
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def generate_result(request):
-    top_menus = Menu.objects.filter(created_at=datetime.now().date()).order_by('-vote_count')[:4]
-    previous_results = Result.objects.filter(~Q(created_at=datetime.now().date())).values_list('restaurant_id',
-                                                                                               flat=True)[:3]
+    top_menus = Menu.objects.filter(created_at=datetime.now().date(), vote_count__gt=0).order_by('-vote_count')
+    previous_results = Result.objects.filter(~Q(created_at=datetime.now().date())).order_by('-created_at').values_list(
+        'restaurant_id', flat=True)[:3]
+
     for menu in top_menus:
         if menu.restaurant_id not in previous_results:
             try:

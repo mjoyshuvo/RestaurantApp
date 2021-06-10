@@ -1,11 +1,11 @@
 from django.db import models
 from conf.validators import validate_file_extension_menu
-from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import date
 
 
 class BaseModel(models.Model):
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateField(default=date.today)
+    updated_at = models.DateField(default=date.today)
 
     class Meta:
         abstract = True
@@ -31,3 +31,6 @@ class Result(BaseModel):
 
     class Meta:
         unique_together = ('restaurant', 'created_at')
+
+    def __str__(self):
+        return self.pk

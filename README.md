@@ -1,38 +1,58 @@
-![](https://github.com/HTSL-Bangladesh/InventoryManagement/workflows/CIPipeline/badge.svg)
-# A Basic Django Boilerpalte with RBAC, Permission based API, Pagination, Search filter & CI with Github Action.
 
-Requirements
+Prerequisite
 ------------
 
-* [Django](https://www.djangoproject.com/download/)
-* [PostgreSql](https://www.postgresql.org/download/)
-* [virtualenv](http://www.virtualenv.org/en/latest/)
+* [Python]
+* [Docker]
 
 Getting started
 ---------------
 
-Create a virtual enviroment to work inside.
+Git clone and go to the RestaurantApp folder.
 
+* Build using Docker container.
 ```bash
-$ virtualenv -p python3 venv
+$ docker-compose build
+```
+* Run using Docker container.
+```bash
+$ docker-compose up
+```
+* Run migration command
+```bash
+$ docker-compose exec web python manage.py migrate
+```
+* Create a superuser and necessary roles and permissions for Role based access control i.e: Employee, Restaurant user.
+```bash
+$ docker-compose exec web python manage.py loaddata import_sql/bootup.json
 ```
 
-Jump in and turn it on.
-
+* User credentials:
 ```bash
-$ cd venv
-$ source /bin/activate
+username: admin
+password: 1q2w3e4r5t6y
+```
+# Required Api lists:
+ **Authentication:**
+
+http://0.0.0.0:8000/api/token/
+```http
+POST /new_task
 ```
 
-Install Dependencies.
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `cmd` | `string` | **Required**. Your command i.e: ls, pwd |
 
-```bash
-$ pip install -r requirements.txt
+## Responses
+
+```javascript
+{
+    "id": "609d6d050cc8c94566426202",
+    "status": 201
+}
 ```
+* List of all Api and Api documentations:
 
-Create Databse
+http://0.0.0.0:8000/
 
-Run Server:
-```bash
-$ python manage.py runserver
-```
