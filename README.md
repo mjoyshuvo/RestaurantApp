@@ -33,26 +33,22 @@ username: admin
 password: 1q2w3e4r5t6y
 ```
 # Required Api lists:
- **Authentication:**
+* Postman Collection:
+  
+https://www.getpostman.com/collections/174c454c15c772b00fae
 
-http://0.0.0.0:8000/api/token/
-```http
-POST /new_task
-```
+Import this link to postman to get all API required.
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `cmd` | `string` | **Required**. Your command i.e: ls, pwd |
-
-## Responses
-
-```javascript
-{
-    "id": "609d6d050cc8c94566426202",
-    "status": 201
-}
-```
-* List of all Api and Api documentations:
+* You can also find the list of all Api and Api documentations:
 
 http://0.0.0.0:8000/
 
+* Automated tests:
+Some automated tests ate at apps/tests folder
+  
+```bash
+docker-compose exec web python manage.py test
+```
+
+* Logs:
+Logs are recorded for voting. Logs can be found in apps/log directory. Date wise logs are available here.
