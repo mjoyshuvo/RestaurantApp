@@ -66,13 +66,13 @@ class TestUserAPI(TestSetup):
         token = self.get_token()
         self.client.credentials(HTTP_AUTHORIZATION='Bearer {0}'.format(token))
         restaurant = Restaurant.objects.create(name='Restaurant')
-        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd/png", created_at='2021-06-10')
+        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd.png", created_at='2021-06-10')
         response = self.client.get(self.make_vote_url, {'menu_id': menu.id})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_user_can_vote_current_day_menu(self):
         restaurant = Restaurant.objects.create(name='Restaurant')
-        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd/png", created_at=datetime.now().date())
+        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd.png", created_at=datetime.now().date())
         token = self.get_token()
         self.client.credentials(HTTP_AUTHORIZATION='Bearer {0}'.format(token))
         response = self.client.get(self.make_vote_url, {'menu_id': menu.id})
