@@ -109,4 +109,4 @@ def generate_result(request):
             except Result.DoesNotExist:
                 Result.objects.create(restaurant=menu.restaurant)
             return Response({"status": 200, "message": "The winner restaurant is {}".format(menu.restaurant.name)})
-    return Response({"status": 200, "message": "No result found"})
+    return Response({"status": 404, "message": "No result found"})
