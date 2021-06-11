@@ -33,6 +33,8 @@ username: admin
 password: 1q2w3e4r5t6y
 ```
 # Required Api lists:
+I used JWT for token based authentication and Role Based Access Control.
+
 * Postman Collection:
   
 https://www.getpostman.com/collections/174c454c15c772b00fae
