@@ -60,3 +60,4 @@ class TestUserAPI(TestSetup):
         response = self.client.get(self.user_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+

@@ -104,9 +104,8 @@ def generate_result(request):
     for menu in top_menus:
         if menu.restaurant_id not in previous_results:
             try:
-                result = Result.objects.get(created_at=datetime.now().date())
-                # result.restaurant = menu.restaurant
-                # menu.save()
+                Result.objects.get(created_at=datetime.now().date())
+
             except Result.DoesNotExist:
                 Result.objects.create(restaurant=menu.restaurant)
             return Response({"status": 200, "message": "The winner restaurant is {}".format(menu.restaurant.name)})

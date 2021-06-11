@@ -14,6 +14,7 @@ class TestSetup(APITestCase):
             "email": "u_test@gmail.com",
             "username": "u_test",
             "password": "strong_password",
+            "role": 1
         }
         self.credential = {
             "username": self.user_data['username'],
