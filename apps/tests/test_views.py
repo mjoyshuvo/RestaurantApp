@@ -1,6 +1,8 @@
 from .test_setup import TestSetup
 from apps.user.models import UserProfile, Role, Permission
+from apps.restaurant.models import Menu, Restaurant
 from rest_framework import status
+from datetime import datetime
 
 
 class TestUserAPI(TestSetup):
@@ -60,4 +62,18 @@ class TestUserAPI(TestSetup):
         response = self.client.get(self.user_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_user_cannot_vote_previous_day_menu(self):
+        token = self.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer {0}'.format(token))
+        restaurant = Restaurant.objects.create(name='Restaurant')
+        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd/png", created_at='2021-06-10')
+        response = self.client.get(self.make_vote_url, {'menu_id': menu.id})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_user_can_vote_current_day_menu(self):
+        restaurant = Restaurant.objects.create(name='Restaurant')
+        menu = Menu.objects.create(restaurant=restaurant, menu="media/menus/abcd/png", created_at=datetime.now().date())
+        token = self.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer {0}'.format(token))
+        response = self.client.get(self.make_vote_url, {'menu_id': menu.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
