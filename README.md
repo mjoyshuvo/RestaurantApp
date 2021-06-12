@@ -53,4 +53,4 @@ docker-compose exec web python manage.py test
 ```
 
 * Logs:
-Logs are recorded for voting. Logs can be found in apps/log directory. Date wise logs are available here.
+Logs are recorded for voting. Logs can be found in apps/log directory. Date wise logs will be there.
